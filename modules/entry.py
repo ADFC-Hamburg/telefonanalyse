@@ -3,7 +3,7 @@ enter new phone calls into the database."""
 
 import tkcalendar
 
-from common import templates,database
+from common import database, strings, templates
 import datetime
 import tkinter as tk
 from tkinter import ttk
@@ -84,7 +84,7 @@ class Window(templates.InputWindow):
         self._topic = tk.StringVar(frame)
         topicbox = ttk.Combobox(
             frame,textvariable=self._topic,
-            values=sorted(database.TOPICLIST),width=12
+            values=sorted(strings.TOPICLIST),width=12
             )
         topicbox.grid(row=2,column=1,columnspan=2)
 

@@ -7,10 +7,6 @@ from os import chmod
 import sqlite3
 
 DAYZERO = date(year=2000,month=1,day=1)
-TOPICLIST = (
-    'Codierung','Verkehr','Mitgliedschaft','Touren','Versicherung','B2B',
-    'Tourismus'
-    )
 
 class Connection():
     """A handler for connections to the database with methods for common
