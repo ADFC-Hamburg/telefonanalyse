@@ -1,3 +1,6 @@
+"""This module provides a sub window where users can
+enter new phone calls into the database."""
+
 import tkcalendar
 
 from common import templates,database
@@ -6,6 +9,10 @@ import tkinter as tk
 from tkinter import ttk
 
 class Window(templates.InputWindow):
+    """A handler for a sub window.
+    
+    This window lets the user enter a new phone call into the database."""
+
     TITLE = 'Ein Telefongespräch eintragen'
     BUTTON_LABEL = 'OK'
     MENU_PRIORITY = 250
@@ -14,7 +21,7 @@ class Window(templates.InputWindow):
     MIN_HEIGHT = 170
     MIN_WIDTH = 210
 
-    def _populate(self,frame:tk.Widget):
+    def _populate(self,frame:tk.Widget) -> None:
         """
         Creates the content of the sub window
         and places it in the designated frame.
@@ -81,8 +88,14 @@ class Window(templates.InputWindow):
             )
         topicbox.grid(row=2,column=1,columnspan=2)
 
-    def execute(self):
-        """Function to be run when the button is pressed."""
+    def execute(self) -> None:
+        """
+        If user entered data is valid, writes it into the database.
+
+        Closes this sub window on success.
+        
+        To be run when the button is pressed.
+        """
         date:datetime.date = self._date_field.get_date()
 
         try:
