@@ -6,6 +6,8 @@ from datetime import date, time, timedelta
 from os import chmod
 import sqlite3
 
+from common import strings
+
 DAYZERO = date(year=2000,month=1,day=1)
 
 class Connection():
@@ -16,10 +18,6 @@ class Connection():
 
     class NotConnectedError(Exception):
         pass
-
-    PATH = 'telefonanalyse.db'
-    TABLENAME = 'Anrufe'
-    
 
     def __enter__(self):
         self.connect()
@@ -42,9 +40,9 @@ class Connection():
 
     def connect(self) -> None:
         """Connects to the database and prepares a cursor."""
-        self._db = sqlite3.connect(self.PATH)
+        self._db = sqlite3.connect(strings.DB_PATH)
         try:
-            chmod(self.PATH,0o666) # Permits all users to read/write to db
+            chmod(strings.DB_PATH,0o666) # Permits all users to read/write to db
         except:
             pass
         self._c = self._db.cursor()
@@ -91,10 +89,10 @@ class Connection():
         """
 
         c = self._cursor()
-        c.execute(f"CREATE TABLE IF NOT EXISTS {self.TABLENAME} (\
+        c.execute(f"CREATE TABLE IF NOT EXISTS {strings.DB_NAME_CALLS} (\
                     ID INTEGER PRIMARY KEY, Duration INTEGER,\
                     Day INTEGER, Time INTEGER, Topic TEXT)")
-        c.execute(f'INSERT INTO {self.TABLENAME}\
+        c.execute(f'INSERT INTO {strings.DB_NAME_CALLS}\
                   (Duration, Day, Time, Topic) VALUES\
                   ("{str(duration)}", "{self._datetoint(day)}",\
                    "{self._timetoint(hm)}", "{topic}")')
