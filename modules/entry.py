@@ -13,8 +13,8 @@ class Window(templates.InputWindow):
     
     This window lets the user enter a new phone call into the database."""
 
-    TITLE = 'Ein Telefongespräch eintragen'
-    BUTTON_LABEL = 'OK'
+    TITLE = strings.WINDOW.ENTRY
+    BUTTON_LABEL = strings.BUTTON.OK
     MENU_PRIORITY = 250
     DEFAULT_HEIGHT = 185
     DEFAULT_WIDTH = 300
@@ -35,7 +35,8 @@ class Window(templates.InputWindow):
         label_left:list[ttk.Label]=[]
         label_right:list[ttk.Label] = []
 
-        for text in ('Zeitpunkt','Dauer','Thema'):
+        for text in (strings.COLUMN.DATETIME,strings.COLUMN.DURATION,
+                     strings.COLUMN.TOPIC):
             label_left.append(ttk.Label(frame,text=text+':'))
         for i in range(len(label_left)):
             label_left[i].grid(row=i,column=0,sticky='nw')
@@ -77,7 +78,7 @@ class Window(templates.InputWindow):
             textvariable=self._duration
             )
         dur_field.grid(row=1,column=1,sticky='e')
-        label_right.append(ttk.Label(frame,text='Minuten'))
+        label_right.append(ttk.Label(frame,text=strings.LABEL.MINUTES))
         label_right[-1].grid(row=1,column=2,sticky='w')
 
         # Topic field
@@ -104,7 +105,8 @@ class Window(templates.InputWindow):
                 )
         except:
             self.alert(
-                'Fehleingabe','Gib bitte eine korrekte Uhrzeit ein.',
+                strings.ALERT.TITLE.ENTRYERROR,
+                strings.ALERT.FORMAT_TIME,
                 error=True
                 )
             return
@@ -112,22 +114,23 @@ class Window(templates.InputWindow):
             duration = int(self._duration.get())
         except:
             self.alert(
-                'Fehleingabe',
-                'Gib die Dauer des Anrufes bitte in ganzen Minuten an.',
+                strings.ALERT.TITLE.ENTRYERROR,
+                strings.ALERT.FORMAT_DURATION,
                 error=True
                 )
             return
         if not duration:
             self.alert(
-                'Fehlende Eingabe',
-                'Gib bitte die Dauer des Anrufes an.',error=True
+                strings.ALERT.TITLE.MISSINGENTRY,
+                strings.ALERT.MISSING_DURATION,
+                error=True
                 )
             return
         topic = self._topic.get()
         if not topic:
             self.alert(
-                'Fehlende Eingabe',
-                'Gib bitte den Grund des Anrufes an.',
+                strings.ALERT.TITLE.MISSINGENTRY,
+                strings.ALERT.MISSING_TOPIC,
                 error=True
                 )
             return
@@ -136,17 +139,17 @@ class Window(templates.InputWindow):
                 con.write(duration,date,time,topic)
             except database.sqlite3.Error as e:
                 self.alert(
-                    'SQL-Fehler',
-                    'Fehler beim Aktualisieren der Datenbank',
+                    strings.ALERT.TITLE.SQLERROR,
+                    strings.ALERT.ERROR_DB_UPDATE,
                     detail=str(e),error=True
                     )
                 return
             except ValueError as e:
                 self.alert(
-                    'Eingabefehler',
-                    'Fehler beim Aktualisieren der Datenbank',
+                    strings.ALERT.TITLE.ENTRYERROR,
+                    strings.ALERT.ERROR_DB_UPDATE,
                     detail=str(e),error=True
                     )
                 return
-        self.alert('Erfolg','Eintrag erstellt')
+        self.alert(strings.ALERT.TITLE.SUCCESS,strings.ALERT.SUCCESS_ENTRY)
         self.window.destroy()

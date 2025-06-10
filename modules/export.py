@@ -1,17 +1,18 @@
 """This module provides a sub window where users can
 export the phone call list to a file."""
 
-from common import database, entries, templates
+from common import database, entries, strings, templates
 import tkinter as tk
-from tkinter import filedialog, ttk
+from tkinter import ttk
+from tkinter.filedialog import asksaveasfile as tk_asksaveasfile
 
 class Window(templates.InputWindow):
     """A handler for a sub window.
 
     This window lets the user export the list of phone calls."""
 
-    TITLE = 'Die Anrufliste exportieren'
-    BUTTON_LABEL = 'Exportieren…'
+    TITLE = strings.WINDOW.EXPORT
+    BUTTON_LABEL = strings.BUTTON.EXPORT
     MENU_PRIORITY = 50
     DEFAULT_HEIGHT = 180
     DEFAULT_WIDTH = 300
@@ -27,8 +28,8 @@ class Window(templates.InputWindow):
 
         # Create radio buttons
         RADIO_TEXT = (
-            'Die ganze Liste exportieren',
-            'Nur die Einträge der letzten \nTage exportieren'
+            strings.LABEL.EXPORT_ENTIRE_LIST,
+            strings.LABEL.EXPORT_DAYS_LN1+' \n'+strings.LABEL.EXPORT_DAYS_LN2
             )
 
         self._limit_days = tk.BooleanVar(master=frame,value=False)
@@ -43,7 +44,7 @@ class Window(templates.InputWindow):
         # Create checkbox
         self._include_title_row = tk.BooleanVar(master=frame,value=True)
         checkbox_title = ttk.Checkbutton(frame,
-                                        text='Tabelle mit Überschriftszeile',
+                                        text=strings.LABEL.TABLE_WITH_HEADER,
                                         variable=self._include_title_row)
         checkbox_title.grid(row=2,column=0,columnspan=2,
                             sticky='nw',pady=self.PADDING)
@@ -66,7 +67,9 @@ class Window(templates.InputWindow):
             days = int(self._day_number.get())\
                    if self._limit_days.get() else None
         except (ValueError,tk.TclError):
-            self.alert('Fehleingabe','Bitte gib eine Zahl ein.',error=True)
+            self.alert(strings.ALERT.TITLE.ENTRYERROR,
+                       strings.ALERT.FORMAT_DAYS,
+                       error=True)
             return
         
         # Fetch table
@@ -75,7 +78,8 @@ class Window(templates.InputWindow):
                 table = con.fetch(days=days)
         except database.sqlite3.Error as e:
             self.alert(
-                'SQL-Fehler','Fehler beim Zugriff auf die Datenbank',
+                strings.ALERT.TITLE.SQLERROR,
+                strings.ALERT.ERROR_DB_ACCESS,
                 detail=str(e),error=True
             )
             return
@@ -83,19 +87,17 @@ class Window(templates.InputWindow):
         # Abort if table empty
         if not table:
             self.alert(
-                'Leere Tabelle',
-                'Die Anrufsliste enthält keine Einträge.',
+                strings.ALERT.TITLE.NOENTRIESFOUND,
+                strings.ALERT.ZERO_ENTRIES,
                 warning=True
             )
             return
         
         # Open 'Save As' dialogue
-        filetypes = (('Comma Seperated Values','*.csv'),
-                     ('Alle Dateien','*.*'))
         try:
-            with filedialog.asksaveasfile(filetypes=filetypes,
-                                          initialfile='Anrufliste.csv',
-                                          parent=self.window) as f:
+            with tk_asksaveasfile(filetypes=strings.EXPORT_TYPES,
+                               initialfile=strings.EXPORT_DEFAULT_PATH,
+                               parent=self.window) as f:
 
                 try:
                     # Write to file
@@ -106,8 +108,8 @@ class Window(templates.InputWindow):
 
                 except (IOError,OSError):
                     self.window.alert(
-                        'Dateifehler',
-                        'Fehler beim Speichern der Datei.',
+                        strings.ALERT.TITLE.FILEERROR,
+                        strings.ALERT.ERROR_FILE_SAVE,
                         error=True
                     )
                     return
@@ -115,12 +117,13 @@ class Window(templates.InputWindow):
             return
         except (FileNotFoundError,PermissionError,OSError):
             self.alert(
-                'Dateifehler',
-                'Fehler beim Öffnen der Datei.',
+                strings.ALERT.TITLE.FILEERROR,
+                strings.ALERT.ERROR_FILE_OPEN,
                 error=True
             )
             return
         
         # Confirm success and close window
-        self.alert('Exportiert','Die Datei wurde gespeichert.')
+        self.alert(strings.ALERT.TITLE.SUCCESS,
+                   strings.ALERT.SUCCESS_SAVE)
         self.window.destroy()

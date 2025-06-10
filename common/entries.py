@@ -1,5 +1,7 @@
 """Provides a class for phone call list entries."""
 
+from common import strings
+
 from typing import NamedTuple
 from datetime import date, time
 
@@ -12,7 +14,9 @@ class PhoneCall(NamedTuple):
     topic: str
 
 
-COMMA_SEPERATED_ORDER = 'ID,Datum,Uhrzeit,Thema,Dauer'
+COMMA_SEPERATED_ORDER = ','.join((strings.COLUMN.ID,strings.COLUMN.DATE,
+                                  strings.COLUMN.TIME,strings.COLUMN.TOPIC,
+                                  strings.COLUMN.DURATION))
 
 def comma_seperated(entry:PhoneCall) -> str:
     """Converts a PhoneCall object into a comma seperated string."""

@@ -90,13 +90,17 @@ class Connection():
         """
 
         c = self._cursor()
-        c.execute(f"CREATE TABLE IF NOT EXISTS {strings.DB_NAME_CALLS} (\
-                    ID INTEGER PRIMARY KEY, Duration INTEGER,\
-                    Day INTEGER, Time INTEGER, Topic TEXT)")
-        c.execute(f'INSERT INTO {strings.DB_NAME_CALLS}\
-                  (Duration, Day, Time, Topic) VALUES\
-                  ("{str(duration)}", "{self._datetoint(day)}",\
-                   "{self._timetoint(hm)}", "{topic}")')
+        c.execute( f'CREATE TABLE IF NOT EXISTS {strings.DB_NAME_CALLS} '
+                  +f'({strings.COLUMN.DB.ID} INTEGER PRIMARY KEY,'
+                  +f' {strings.COLUMN.DB.DURATION} INTEGER,'
+                  +f' {strings.COLUMN.DB.DATE} INTEGER,'
+                  +f' {strings.COLUMN.DB.TIME} INTEGER,'
+                  +f' {strings.COLUMN.DB.TOPIC} TEXT)')
+        c.execute( f'INSERT INTO {strings.DB_NAME_CALLS} '
+                  +f'({strings.COLUMN.DB.DURATION}, {strings.COLUMN.DB.DATE},'
+                  +f' {strings.COLUMN.DB.TIME}, {strings.COLUMN.DB.TOPIC}) '
+                  +f'VALUES ("{str(duration)}", "{self._datetoint(day)}",'
+                  +f' "{self._timetoint(hm)}", "{topic}")')
         self._db.commit()
 
     def fetch(self,days:int|None=None) -> tuple[PhoneCall]:
@@ -113,7 +117,7 @@ class Connection():
         command = f"SELECT * FROM {strings.DB_NAME_CALLS}"
         if not days is None:
             startday = self._datetoint(date.today()) - days
-            command += f" WHERE Day >= {str(startday)}"
+            command += f" WHERE {strings.COLUMN.DB.DATE} >= {str(startday)}"
         command += ";"
         c.execute(command)
         return tuple(PhoneCall(entry[0],
