@@ -2,7 +2,6 @@
 This module contains templates for tkinter windows.
 """
 
-from copy import copy
 from typing import Sequence, Type
 import tkinter as tk
 from tkinter import ttk,messagebox
