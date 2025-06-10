@@ -125,5 +125,7 @@ class Window(templates.InputWindow):
         
         # Confirm success and close window
         self.alert(strings.ALERT.TITLE.SUCCESS,
-                   strings.ALERT.SUCCESS_SAVE)
+                   strings.ALERT.SUCCESS_SAVE,
+                   strings.ALERT.COUNT_EXPORT.format(count=str(len(table)))
+        )
         self.window.destroy()

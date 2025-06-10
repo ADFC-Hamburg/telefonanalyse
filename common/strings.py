@@ -25,6 +25,7 @@ class ALERT():
         NOENTRIESFOUND = 'Keine Einträge gefunden'
         SQLERROR = 'SQL-Fehler'
         SUCCESS = 'Erfolg'
+    COUNT_EXPORT = 'Es wurden {count} Einträge exportiert.'
     ERROR_DB_ACCESS = 'Fehler beim Zugriff auf die Datenbank'
     ERROR_DB_UPDATE = 'Fehler beim Aktualisieren der Datenbank'
     ERROR_FILE_OPEN = 'Fehler beim Öffnen der Datei.'
