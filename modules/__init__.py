@@ -1,8 +1,8 @@
-from . import entry
+from . import entry, export
 
 from types import ModuleType
 
-__windowmodules = (entry,)
+__windowmodules = (entry, export)
 
 def getwindows() -> tuple[ModuleType]:
     return tuple([module.Window for module in __windowmodules])

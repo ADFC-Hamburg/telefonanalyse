@@ -7,6 +7,7 @@ from os import chmod
 import sqlite3
 
 from common import strings
+from common.entries import PhoneCall
 
 DAYZERO = date(year=2000,month=1,day=1)
 
@@ -97,3 +98,27 @@ class Connection():
                   ("{str(duration)}", "{self._datetoint(day)}",\
                    "{self._timetoint(hm)}", "{topic}")')
         self._db.commit()
+
+    def fetch(self,days:int|None=None) -> tuple[PhoneCall]:
+        """Fetch database entries from the list of phone calls.
+
+        Args:
+            days: If set, only fetches entries dating back
+                no more than that number of days.
+        
+        Returns:
+            A tuple containing each entry as a PhoneCall object.
+        """
+        c = self._cursor()
+        command = f"SELECT * FROM {strings.DB_NAME_CALLS}"
+        if not days is None:
+            startday = self._datetoint(date.today()) - days
+            command += f" WHERE Day >= {str(startday)}"
+        command += ";"
+        c.execute(command)
+        return tuple(PhoneCall(entry[0],
+                               entry[1],
+                               self._inttodate(entry[2]),
+                               self._inttotime(entry[3]),
+                               entry[4])
+                     for entry in c.fetchall())
