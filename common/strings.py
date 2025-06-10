@@ -14,7 +14,8 @@ TOPICLIST = (
     'Touren',
     'Versicherung',
     'B2B',
-    'Tourismus'
+    'Tourismus',
+    'Aktive'
 )
 
 class ALERT():
